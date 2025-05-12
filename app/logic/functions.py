@@ -7,6 +7,7 @@ from docx2pdf import convert
 
 from app.state.app_state import app_state
 
+
 # Function to replace placeholder in paragraphs
 def replace_placeholder_in_paragraphs(doc, placeholder, replacement):
     for paragraph in doc.paragraphs:

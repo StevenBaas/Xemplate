@@ -1,4 +1,4 @@
-import tkinter as tk
+import customtkinter as ctk
 from tkinter import filedialog, messagebox
 from app.state.app_state import app_state
 from app.logic.functions import *
@@ -29,24 +29,32 @@ def call_propogate_template():
 
 
 def launch_ui():
-    root = tk.Tk()
+    root = ctk.Tk()
     root.title("Xemplate")
     root.protocol("WM_DELETE_WINDOW", root.quit)
     root.state('zoomed')
 
-    excel_group = tk.Frame(root, bd=2, relief=tk.GROOVE)
+    excel_group = ctk.Frame(root, bd=2, relief=ctk.GROOVE)
     excel_group.pack()
-    word_group = tk.Frame(root, bd=2, relief=tk.GROOVE)
+    word_group = ctk.Frame(root, bd=2, relief=ctk.GROOVE)
     word_group.pack()
 
-    tk.Button(excel_group, text="Upload Excel Data", command=open_excel_file).pack()
-    tk.Label(excel_group, text="Excel Sheet Name:").pack()
-    tk.Text(excel_group, height=1, width=30).pack()
+    excel_upload_button = ctk.Button(excel_group, text="Upload Excel Data", command=open_excel_file)
+    excel_upload_button.pack()
+    excel_sheet_name_label = ctk.Label(excel_group, text="Excel Sheet Name:")
+    excel_sheet_name_label.pack()
+    excel_sheet_name_text = ctk.Text(excel_group, height=1, width=30)
+    excel_sheet_name_text.pack()
 
-    tk.Button(word_group, text="Upload Word Template", command=open_word_file).pack()
-    tk.Label(word_group, text="Output Document Name:").pack()
-    tk.Text(word_group, height=1, width=30).pack()
+    word_upload_button = ctk.Button(word_group, text="Upload Word Template", command=open_word_file)
+    word_upload_button.pack()
+    output_file_name_label = ctk.Label(word_group, text="Output File Name:")
+    output_file_name_label.pack()
+    output_file_name_text = ctk.Text(word_group, height=1, width=30)
+    output_file_name_text.pack()
+
+
     
-    tk.Button(root, text="Propogate Template", command=call_propogate_template).pack()
+    ctk.Button(root, text="Propogate Template", command=call_propogate_template).pack()
 
     root.mainloop()

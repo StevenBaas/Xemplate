@@ -5,6 +5,7 @@ class AppState:
         self.word_template_path = None
         self.output_folder_path = "output"
         self.output_file_name = None # Main name of the output file
-        self.personalization_column = None # Name to personalize each document, will probaly be a column in the sheet
+        self.personalization_columns = {} # Name to personalize each document, will probaly be a column in the sheet
+        self.personalization_name = None
 
 app_state = AppState()
