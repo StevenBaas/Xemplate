@@ -29,32 +29,32 @@ def call_propogate_template():
 
 
 def launch_ui():
-    root = ctk.Tk()
+    root = ctk.CTk()
     root.title("Xemplate")
     root.protocol("WM_DELETE_WINDOW", root.quit)
-    root.state('zoomed')
+    screen_height = root.winfo_screenheight()
+    screen_width = root.winfo_screenwidth()
+    root.geometry(f"{screen_height}x{int(screen_width/2)}+0+0")
 
-    excel_group = ctk.Frame(root, bd=2, relief=ctk.GROOVE)
-    excel_group.pack()
-    word_group = ctk.Frame(root, bd=2, relief=ctk.GROOVE)
-    word_group.pack()
+    excel_group = ctk.CTkFrame(master=root)
+    excel_group.pack(pady=10)
+    word_group = ctk.CTkFrame(master=root)
+    word_group.pack(pady=10)
 
-    excel_upload_button = ctk.Button(excel_group, text="Upload Excel Data", command=open_excel_file)
-    excel_upload_button.pack()
-    excel_sheet_name_label = ctk.Label(excel_group, text="Excel Sheet Name:")
-    excel_sheet_name_label.pack()
-    excel_sheet_name_text = ctk.Text(excel_group, height=1, width=30)
-    excel_sheet_name_text.pack()
+    excel_upload_button = ctk.CTkButton(master=excel_group, text="Upload Excel Data", command=open_excel_file)
+    excel_upload_button.pack(pady=10)
+    excel_sheet_name_label = ctk.CTkLabel(master=excel_group, text="Excel Sheet Name:")
+    excel_sheet_name_label.pack(pady=10)
+    excel_sheet_name_text = ctk.CTkEntry(master=excel_group, width=30)
+    excel_sheet_name_text.pack(pady=10)
 
-    word_upload_button = ctk.Button(word_group, text="Upload Word Template", command=open_word_file)
-    word_upload_button.pack()
-    output_file_name_label = ctk.Label(word_group, text="Output File Name:")
-    output_file_name_label.pack()
-    output_file_name_text = ctk.Text(word_group, height=1, width=30)
-    output_file_name_text.pack()
+    word_upload_button = ctk.CTkButton(master=word_group, text="Upload Word Template", command=open_word_file)
+    word_upload_button.pack(pady=10)
+    output_file_name_label = ctk.CTkLabel(master=word_group, text="Output File Name:")
+    output_file_name_label.pack(pady=10)
+    output_file_name_text = ctk.CTkEntry(master=word_group, width=30)
+    output_file_name_text.pack(pady=10)
 
-
-    
-    ctk.Button(root, text="Propogate Template", command=call_propogate_template).pack()
+    ctk.CTkButton(master=root, text="Propogate Template", command=call_propogate_template).pack()
 
     root.mainloop()
