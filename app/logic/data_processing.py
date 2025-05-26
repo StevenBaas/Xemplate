@@ -73,6 +73,13 @@ def get_data_as_list(data):
     return data_list
 
 
+def is_empty(data):
+    if (data is None) or (data == "None") or (data == ""):
+        return True
+    else:
+        return False
+
+
 def convert_to_pdf(output_folder_path, output_file_name):
     convert(os.path.join(output_folder_path, output_file_name))
     os.remove(os.path.join(output_folder_path, output_file_name))
@@ -101,42 +108,42 @@ def propogate_template(excel_file_path, excel_sheet_name, template_file_path):
                 placeholder = "[LAST_NAME]"
                 replacement = row[i]
 
-                if (replacement is None) or (replacement == "None") or (replacement == ""):
+                if is_empty(replacement):
                     replacement = "N/A"
                 replace_placeholder_in_document(doc, placeholder, replacement)
             elif i == 2:
                 placeholder = "[FIRST_NAME]"
                 replacement = row[i]
 
-                if (replacement is None) or (replacement == "None") or (replacement == ""):
+                if is_empty(replacement):
                     replacement = "N/A"
                 replace_placeholder_in_document(doc, placeholder, replacement)
             elif i == 3:
                 placeholder = "[STUDENT_NUMBER]"
                 replacement = row[i]
 
-                if (replacement is None) or (replacement == "None") or (replacement == ""):
+                if is_empty(replacement):
                     replacement = "N/A"
                 replace_placeholder_in_document(doc, placeholder, replacement)
             elif i == 4:
                 placeholder = "[ID]"
                 replacement = row[i]
 
-                if (replacement is None) or (replacement == "None") or (replacement == ""):
+                if is_empty(replacement):
                     replacement = "N/A"
                 replace_placeholder_in_document(doc, placeholder, replacement)
             elif i == 5:
                 placeholder = "[INSTITUTION]"
                 replacement = row[i]
 
-                if (replacement is None) or (replacement == "None") or (replacement == ""):
+                if is_empty(replacement):
                     replacement = "Other Debt"
                 replace_placeholder_in_document(doc, placeholder, replacement)
             elif i == 6:
                 placeholder = "[QUALIFICATION]"
                 replacement = row[i]
 
-                if (replacement is None) or (replacement == "None") or (replacement == ""):
+                if is_empty(replacement):
                     replacement = "N/A"
                 replace_placeholder_in_document(doc, placeholder, replacement)
 
