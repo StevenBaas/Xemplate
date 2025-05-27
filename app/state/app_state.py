@@ -14,7 +14,27 @@ class AppState:
         self.personalization_name = ""
 
         # UI Elements
-        placeholder_entries = [] # List of placeholder entries in the UI
-        replacement_entries = [] # List of replacement entries in the UI
+        self.root = None
+        self.left_group = None
+        self.right_group = None
+        self.placeholder_and_replacement_group = None
+        self.placeholder_entries = [] # List of placeholder entries in the UI
+        self.replacement_entries = [] # List of replacement entries in the UI
+
+        # UI Variables
+        self.current_row = 0
+        self.current_column = 0
+
+        #self.max_columns = self.get_max_columns()
+
+    def get_max_columns(self):
+            self.root.update_idletasks()
+            root_width = self.root.winfo_width()
+            left_group_width = self.left_group.winfo_width()
+            placeholder_and_replacement_width = self.placeholder_and_replacement_group.winfo_width()
+            max_columns = int((root_width + left_group_width) / placeholder_and_replacement_width)
+            print(max_columns)
+            return max_columns
+
 
 app_state = AppState()

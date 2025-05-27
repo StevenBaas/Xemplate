@@ -2,6 +2,7 @@ import customtkinter as ctk
 from tkinter import filedialog, messagebox
 from app.state.app_state import app_state
 from app.logic.data_processing import *
+from app.logic.ui_logic import *
 
 
 def open_excel_file():
@@ -29,65 +30,38 @@ def call_propogate_template():
 
 
 def launch_ui():
-    def add_placeholder_and_replacement():
-        placeholder_and_replacement_group = ctk.CTkFrame(master=right_group)
-        placeholder_and_replacement_group.pack(pady=5)
 
-        placeholder_label = ctk.CTkLabel(master=placeholder_and_replacement_group, text="Placeholder:")
-        placeholder_label.pack(pady=5)
-        placeholder_entry = ctk.CTkEntry(master=placeholder_and_replacement_group, width=100)
-        placeholder_entry.pack(pady=5)
+    app_state.root = ctk.CTk()
+    app_state.root.title("Xemplate")
+    app_state.root.protocol("WM_DELETE_WINDOW", app_state.root.quit)
+    screen_height = app_state.root.winfo_screenheight()
+    screen_width = app_state.root.winfo_screenwidth()
+    app_state.root.geometry(f"{screen_height}x{int(screen_width/2)}+0+0")
 
-        replacement_label = ctk.CTkLabel(master=placeholder_and_replacement_group, text="Replacement Column:")
-        replacement_label.pack(pady=5)
-        replacement_entry = ctk.CTkEntry(master=placeholder_and_replacement_group, width=100)
-        replacement_entry.pack(pady=5)
+    app_state.left_group = ctk.CTkFrame(master=app_state.root)
+    app_state.left_group.grid(pady=5, column=0, row=0, sticky="nsew")
+    app_state.right_group = ctk.CTkFrame(master=app_state.root)
+    app_state.right_group.grid(pady=5, column=1, row=0, sticky="nsew")
 
+    excel_upload_button = ctk.CTkButton(master=app_state.left_group, text="Upload Excel Data", command=open_excel_file)
+    excel_upload_button.grid(pady=5, column=0, row=1, sticky="nsew")
+    excel_sheet_name_label = ctk.CTkLabel(master=app_state.left_group, text="Excel Sheet Name:")
+    excel_sheet_name_label.grid(pady=5, column=0, row=2, sticky="nsew")
+    excel_sheet_name_text = ctk.CTkEntry(master=app_state.left_group, width=100)
+    excel_sheet_name_text.grid(pady=5, column=0, row=3, sticky="nsew")
 
-    root = ctk.CTk()
-    root.title("Xemplate")
-    root.protocol("WM_DELETE_WINDOW", root.quit)
-    screen_height = root.winfo_screenheight()
-    screen_width = root.winfo_screenwidth()
-    root.geometry(f"{screen_height}x{int(screen_width/2)}+0+0")
+    word_upload_button = ctk.CTkButton(master=app_state.left_group, text="Upload Word Template", command=open_word_file)
+    word_upload_button.grid(pady=5, column=0, row=4, sticky="nsew")
 
-    left_group = ctk.CTkFrame(master=root)
-    left_group.pack(pady=5, side="left")
-    excel_group = ctk.CTkFrame(master=left_group)
-    excel_group.pack(pady=5)
-    word_group = ctk.CTkFrame(master=left_group)
-    word_group.pack(pady=5)
-    right_group = ctk.CTkFrame(master=root)
-    right_group.pack(pady=5, side="right")
+    output_file_name_label = ctk.CTkLabel(master=app_state.left_group, text="Output File Name:")
+    output_file_name_label.grid(pady=5, column=0, row=5, sticky="nsew")
+    output_file_name_text = ctk.CTkEntry(master=app_state.left_group, width=100)
+    output_file_name_text.grid(pady=5, column=0, row=6, sticky="nsew")
 
-    excel_upload_button = ctk.CTkButton(master=excel_group, text="Upload Excel Data", command=open_excel_file)
-    excel_upload_button.pack(pady=5)
-    excel_sheet_name_label = ctk.CTkLabel(master=excel_group, text="Excel Sheet Name:")
-    excel_sheet_name_label.pack(pady=5)
-    excel_sheet_name_text = ctk.CTkEntry(master=excel_group, width=100)
-    excel_sheet_name_text.pack(pady=5)
+    add_placeholder_and_replacement_button = ctk.CTkButton(master=app_state.left_group, text="Add Placeholder and Replacement", command=lambda: add_placeholder_and_replacement(app_state.right_group))
+    add_placeholder_and_replacement_button.grid(pady=5, column=0, row=7, sticky="nsew")
 
-    word_upload_button = ctk.CTkButton(master=word_group, text="Upload Word Template", command=open_word_file)
-    word_upload_button.pack(pady=5)
+    propogate_template_button = ctk.CTkButton(master=app_state.left_group, text="Propogate Template", command=call_propogate_template)
+    propogate_template_button.grid(pady=5, column=0, row=8, sticky="nsew")
 
-    output_file_name_label = ctk.CTkLabel(master=word_group, text="Output File Name:")
-    output_file_name_label.pack(pady=5)
-    output_file_name_text = ctk.CTkEntry(master=word_group, width=100)
-    output_file_name_text.pack(pady=5)
-
-    placeholder_label = ctk.CTkLabel(master=right_group, text="Placeholder:")
-    placeholder_label.pack(pady=5)
-    placeholder_entry = ctk.CTkEntry(master=right_group, width=100)
-    placeholder_entry.pack(pady=5)
-
-    replacement_label = ctk.CTkLabel(master=right_group, text="Replacement Column:")
-    replacement_label.pack(pady=5)
-    replacement_entry = ctk.CTkEntry(master=right_group, width=100)
-    replacement_entry.pack(pady=5)
-
-    add_placeholder_and_replacement_button = ctk.CTkButton(master=root, text="Add Placeholder and Replacement", command=add_placeholder_and_replacement)
-    add_placeholder_and_replacement_button.pack(pady=5)
-
-    ctk.CTkButton(master=root, text="Propogate Template", command=call_propogate_template).pack()
-
-    root.mainloop()
+    app_state.root.mainloop()
