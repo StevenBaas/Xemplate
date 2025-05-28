@@ -85,14 +85,14 @@ def convert_to_pdf(output_folder_path, output_file_name):
     os.remove(os.path.join(output_folder_path, output_file_name))
 
 
-def propogate_template(excel_file_path, excel_sheet_name, template_file_path):
+def propogate_template(excel_file_path, template_file_path):
     wb = openpyxl.load_workbook("Data.xlsx", data_only=True, read_only=True) # Will be variable for Uploaded Excel Document
     
-    doc_sheet_name = "2025 Cohort - G10" # Will be variable for Sheet name
-    doc_sheet = get_data_as_list(wb[doc_sheet_name])
-    doc_name = "Confirmation Letter" # Will be variable for Document name
+    excel_sheet_name = app_state.get_sheet_name()
+    excel_sheet = get_data_as_list(wb[excel_sheet_name])
+    doc_name = app_state.get_document_name()
 
-    for row in doc_sheet:
+    for row in excel_sheet:
         # Open the Word document
         doc = Document("Template.docx") # Will be variable for Uploaded Template Document
 

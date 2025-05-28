@@ -37,8 +37,11 @@ def add_placeholder_and_replacement(master):
         replacement_entry = ctk.CTkEntry(master=app_state.placeholder_and_replacement_group, width=100)
         replacement_entry.grid(row=3, column=0)
 
-        app_state.placeholder_entries.append(placeholder_entry)
-        app_state.replacement_entries.append(replacement_entry)
+        placeholder_and_replacement = []
+        placeholder_and_replacement.append(placeholder_entry)
+        placeholder_and_replacement.append(replacement_entry)
+
+        app_state.placeholder_and_replacement.append(placeholder_and_replacement)
 
         app_state.root.update_idletasks()
         
