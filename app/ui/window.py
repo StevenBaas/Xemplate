@@ -61,18 +61,22 @@ def launch_ui():
     word_upload_button = ctk.CTkButton(master=app_state.left_group, text="Upload Word Template", command=open_word_file)
     word_upload_button.grid(pady=5, column=0, row=5, sticky="nsew")
 
-    output_file_name_label = ctk.CTkLabel(master=app_state.left_group, text="Output File Name:")
+    output_file_name_label = ctk.CTkLabel(master=app_state.left_group, text="Columns to use for naming: (A; B; AA; AB)")
     output_file_name_label.grid(pady=5, column=0, row=6, sticky="nsew")
-    output_file_name_text = ctk.CTkEntry(master=app_state.left_group, width=100)
-    output_file_name_text.grid(pady=5, column=0, row=7, sticky="nsew")
+    app_state.naming_columns_entry = ctk.CTkEntry(master=app_state.left_group, width=100)
+    app_state.naming_columns_entry.grid(pady=5, column=0, row=7, sticky="nsew")
 
     add_placeholder_and_replacement_button = ctk.CTkButton(master=app_state.left_group, text="Add Placeholder and Replacement", command=lambda: add_placeholder_and_replacement(app_state.right_group))
     add_placeholder_and_replacement_button.grid(pady=5, column=0, row=8, sticky="nsew")
 
-    propogate_template_button = ctk.CTkButton(master=app_state.left_group, text="Propogate Template", command=lambda: propogate_template(app_state.excel_file_path, app_state.word_template_path))
-    propogate_template_button.grid(pady=5, column=0, row=9, sticky="nsew")
+    app_state.save_as_pdf = ctk.BooleanVar(value=True)
+    save_as_pdf_checkbox = ctk.CTkCheckBox(master=app_state.left_group, text="Save as PDF", variable=app_state.save_as_pdf)
+    save_as_pdf_checkbox.grid(pady=5, column=0, row=9, sticky="nsew")
 
-    test_button = ctk.CTkButton(master=app_state.left_group, text="Test", command=app_state.get_document_name)
-    test_button.grid(pady=5, column=0, row=10, sticky="nsew")
+    propogate_template_button = ctk.CTkButton(master=app_state.left_group, text="Propogate Template", command=lambda: propogate_template(app_state.excel_file_path, app_state.word_template_path))
+    propogate_template_button.grid(pady=5, column=0, row=10, sticky="nsew")
+
+    test_button = ctk.CTkButton(master=app_state.left_group, text="Test", command=app_state.get_placeholders_and_replacement_columns)
+    test_button.grid(pady=5, column=0, row=11, sticky="nsew")
 
     app_state.root.mainloop()

@@ -38,7 +38,7 @@ def replace_placeholder_in_headers_footers(doc, placeholder, replacement):
                 paragraph.text = paragraph.text.replace(placeholder, replacement)
 
 
-# Function to replace placeholder in footnotes and endnotes
+# Function to replace placeholder in footnotes and endnotes (does not currently work)
 def replace_placeholder_in_notes(doc, placeholder, replacement):
     for footnote in doc.footnotes:
         if placeholder in footnote.text:
@@ -53,7 +53,6 @@ def replace_placeholder_in_document(doc, placeholder, replacement):
     replace_placeholder_in_paragraphs(doc, placeholder, replacement)
     replace_placeholder_in_tables(doc, placeholder, replacement)
     replace_placeholder_in_headers_footers(doc, placeholder, replacement)
-    replace_placeholder_in_notes(doc, placeholder, replacement)
 
 
 def get_data_as_list(data):
@@ -86,7 +85,7 @@ def convert_to_pdf(output_folder_path, output_file_name):
 
 
 def propogate_template(excel_file_path, template_file_path):
-    wb = openpyxl.load_workbook("Data.xlsx", data_only=True, read_only=True) # Will be variable for Uploaded Excel Document
+    wb = openpyxl.load_workbook(excel_file_path, data_only=True, read_only=True)
     
     excel_sheet_name = app_state.get_sheet_name()
     excel_sheet = get_data_as_list(wb[excel_sheet_name])
@@ -94,7 +93,7 @@ def propogate_template(excel_file_path, template_file_path):
 
     for row in excel_sheet:
         # Open the Word document
-        doc = Document("Template.docx") # Will be variable for Uploaded Template Document
+        doc = Document(template_file_path)
 
         date = datetime.today()
 
@@ -103,51 +102,34 @@ def propogate_template(excel_file_path, template_file_path):
 
         replace_placeholder_in_document(doc, placeholder, replacement)
 
-        for i in range(13):
-            if i == 1:
-                placeholder = "[LAST_NAME]"
-                replacement = row[i]
+        personalized_name_list = [row[i] for i in app_state.get_naming_columns()]
+        personalized_name = ""
 
-                if is_empty(replacement):
-                    replacement = "N/A"
-                replace_placeholder_in_document(doc, placeholder, replacement)
-            elif i == 2:
-                placeholder = "[FIRST_NAME]"
-                replacement = row[i]
+        for i, word in enumerate(personalized_name_list):
+            if is_empty(word):
+                word = "N/A"
+            
+            personalized_name += word
+            if i < len(personalized_name_list) - 1:
+                personalized_name += " "
 
-                if is_empty(replacement):
-                    replacement = "N/A"
-                replace_placeholder_in_document(doc, placeholder, replacement)
-            elif i == 3:
-                placeholder = "[STUDENT_NUMBER]"
-                replacement = row[i]
 
-                if is_empty(replacement):
-                    replacement = "N/A"
-                replace_placeholder_in_document(doc, placeholder, replacement)
-            elif i == 4:
-                placeholder = "[ID]"
-                replacement = row[i]
+        for placeholder_and_replacement_column in app_state.get_placeholders_and_replacement_columns():
 
-                if is_empty(replacement):
-                    replacement = "N/A"
-                replace_placeholder_in_document(doc, placeholder, replacement)
-            elif i == 5:
-                placeholder = "[INSTITUTION]"
-                replacement = row[i]
+            placeholder = placeholder_and_replacement_column[0]
+            replacement_column = placeholder_and_replacement_column[1]
+            replacement = row[replacement_column]
 
-                if is_empty(replacement):
-                    replacement = "Other Debt"
-                replace_placeholder_in_document(doc, placeholder, replacement)
-            elif i == 6:
-                placeholder = "[QUALIFICATION]"
-                replacement = row[i]
+            if is_empty(replacement):
+                replacement = "N/A"
+            
+            replace_placeholder_in_document(doc, placeholder, replacement)
 
-                if is_empty(replacement):
-                    replacement = "N/A"
-                replace_placeholder_in_document(doc, placeholder, replacement)
+            # Save the modified document
+            os.makedirs(app_state.output_folder_path, exist_ok=True)
 
-        # Save the modified document
-        doc.save(f"output-docs\\{row[1]} {row[2]}_{doc_name}_{date.year}.docx")
-        convert_to_pdf(f"output-docs",
-                       f"{row[1]} {row[2]}_{doc_name}_{date.year}.docx")
+            if app_state.save_as_pdf.get():
+                doc.save(f"{app_state.output_folder_path}\\{personalized_name}_{doc_name}_{date.year}.docx")
+                convert_to_pdf(app_state.output_folder_path, f"{personalized_name}_{doc_name}_{date.year}.docx")
+            else:
+                doc.save(f"{app_state.output_folder_path}\\{personalized_name}_{doc_name}_{date.year}.docx")
