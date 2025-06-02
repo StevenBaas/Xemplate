@@ -4,6 +4,7 @@ from datetime import datetime
 import openpyxl
 from docx import Document
 from docx2pdf import convert
+from concurrent.futures import ThreadPoolExecutor
 
 from app.state.app_state import app_state
 
@@ -83,6 +84,49 @@ def convert_to_pdf(output_folder_path, output_file_name):
     convert(os.path.join(output_folder_path, output_file_name))
     os.remove(os.path.join(output_folder_path, output_file_name))
 
+def process_row(row, template_file_path, doc_name):
+    # Open the Word document
+    doc = Document(template_file_path)
+
+    date = datetime.today()
+
+    placeholder = "[DATE]"
+    replacement = date.strftime("%d %B %Y")
+
+    replace_placeholder_in_document(doc, placeholder, replacement)
+
+    personalized_name_list = [row[i] for i in app_state.get_naming_columns()]
+    personalized_name = ""
+
+    for i, word in enumerate(personalized_name_list):
+        if is_empty(word):
+            word = "N/A"
+        
+        personalized_name += word
+        if i < len(personalized_name_list) - 1:
+            personalized_name += " "
+
+
+    for placeholder_and_replacement_column in app_state.get_placeholders_and_replacement_columns():
+
+        placeholder = placeholder_and_replacement_column[0]
+        replacement_column = placeholder_and_replacement_column[1]
+        replacement = row[replacement_column]
+
+        if is_empty(replacement):
+            replacement = "N/A"
+        
+        replace_placeholder_in_document(doc, placeholder, replacement)
+
+        # Save the modified document
+        os.makedirs(app_state.output_folder_path, exist_ok=True)
+
+        if app_state.save_as_pdf.get():
+            doc.save(f"{app_state.output_folder_path}\\{personalized_name}_{doc_name}_{date.year}.docx")
+            convert_to_pdf(app_state.output_folder_path, f"{personalized_name}_{doc_name}_{date.year}.docx")
+        else:
+            doc.save(f"{app_state.output_folder_path}\\{personalized_name}_{doc_name}_{date.year}.docx")
+
 
 def propogate_template(excel_file_path, template_file_path):
     wb = openpyxl.load_workbook(excel_file_path, data_only=True, read_only=True)
@@ -92,44 +136,4 @@ def propogate_template(excel_file_path, template_file_path):
     doc_name = app_state.get_document_name()
 
     for row in excel_sheet:
-        # Open the Word document
-        doc = Document(template_file_path)
-
-        date = datetime.today()
-
-        placeholder = "[DATE]"
-        replacement = date.strftime("%d %B %Y")
-
-        replace_placeholder_in_document(doc, placeholder, replacement)
-
-        personalized_name_list = [row[i] for i in app_state.get_naming_columns()]
-        personalized_name = ""
-
-        for i, word in enumerate(personalized_name_list):
-            if is_empty(word):
-                word = "N/A"
-            
-            personalized_name += word
-            if i < len(personalized_name_list) - 1:
-                personalized_name += " "
-
-
-        for placeholder_and_replacement_column in app_state.get_placeholders_and_replacement_columns():
-
-            placeholder = placeholder_and_replacement_column[0]
-            replacement_column = placeholder_and_replacement_column[1]
-            replacement = row[replacement_column]
-
-            if is_empty(replacement):
-                replacement = "N/A"
-            
-            replace_placeholder_in_document(doc, placeholder, replacement)
-
-            # Save the modified document
-            os.makedirs(app_state.output_folder_path, exist_ok=True)
-
-            if app_state.save_as_pdf.get():
-                doc.save(f"{app_state.output_folder_path}\\{personalized_name}_{doc_name}_{date.year}.docx")
-                convert_to_pdf(app_state.output_folder_path, f"{personalized_name}_{doc_name}_{date.year}.docx")
-            else:
-                doc.save(f"{app_state.output_folder_path}\\{personalized_name}_{doc_name}_{date.year}.docx")
+        process_row(row, doc_name, template_file_path)
