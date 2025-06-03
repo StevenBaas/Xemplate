@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import threading
 from tkinter import filedialog, messagebox
 from app.state.app_state import app_state
 from app.logic.data_processing import *
@@ -73,7 +74,7 @@ def launch_ui():
     save_as_pdf_checkbox = ctk.CTkCheckBox(master=app_state.left_group, text="Save as PDF", variable=app_state.save_as_pdf)
     save_as_pdf_checkbox.grid(pady=5, column=0, row=9, sticky="nsew")
 
-    propogate_template_button = ctk.CTkButton(master=app_state.left_group, text="Propogate Template", command=lambda: propogate_template(app_state.excel_file_path, app_state.word_template_path))
+    propogate_template_button = ctk.CTkButton(master=app_state.left_group, text="Propogate Template", command=lambda: threading.Thread(target=propogate_template, args=(app_state.excel_file_path, app_state.word_template_path), daemon=True).start())
     propogate_template_button.grid(pady=5, column=0, row=10, sticky="nsew")
 
     test_button = ctk.CTkButton(master=app_state.left_group, text="Test", command=app_state.get_placeholders_and_replacement_columns)

@@ -4,7 +4,7 @@ from datetime import datetime
 import openpyxl
 from docx import Document
 from docx2pdf import convert
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from app.state.app_state import app_state
 
@@ -84,6 +84,7 @@ def convert_to_pdf(output_folder_path, output_file_name):
     convert(os.path.join(output_folder_path, output_file_name))
     os.remove(os.path.join(output_folder_path, output_file_name))
 
+
 def process_row(row, template_file_path, doc_name):
     # Open the Word document
     doc = Document(template_file_path)
@@ -135,5 +136,19 @@ def propogate_template(excel_file_path, template_file_path):
     excel_sheet = get_data_as_list(wb[excel_sheet_name])
     doc_name = app_state.get_document_name()
 
-    for row in excel_sheet:
-        process_row(row, doc_name, template_file_path)
+    # Implemnent multithreading for processing rows
+    max_workers = max(1, os.cpu_count() - 1)
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = []
+        for row in excel_sheet:
+            futures.append(executor.submit(process_row, row, template_file_path, doc_name))
+        
+        for future in as_completed(futures):
+            try:
+                future.result()
+            except Exception as e:
+                print(f"Error processing row: {e}")
+
+    # for row in excel_sheet:
+    #     process_row(row, template_file_path, doc_name)
