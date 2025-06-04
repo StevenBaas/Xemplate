@@ -19,11 +19,13 @@ class AppState:
         self.personalization_name = ""
 
         self.save_as_pdf = None # Boolean to save the output as PDF or not
+        self.is_processing = False # Boolean to indicate if the app is processing data
 
         # UI Elements
         self.root = None
         self.left_group = None
         self.right_group = None
+        self.propogate_template_button = None # Button to propogate the template
         self.placeholders_and_replacements_group = [] # List of UI elements for placeholders and replacements
         self.placeholders_and_replacement_columns = [] # List to hold placeholder and replacement entries
 
@@ -43,13 +45,11 @@ class AppState:
     
     def get_document_name(self):
         if self.document_name_entry:
-            print(self.document_name_entry.get())
             return self.document_name_entry.get()
         return ""
     
     def get_sheet_name(self):
         if self.sheet_name_entry:
-            print(self.sheet_name_entry.get())
             return self.sheet_name_entry.get()
         return ""
     
@@ -64,7 +64,6 @@ class AppState:
                         continue
                     naming_columns_index.append(column_index_from_string(col)-1)
                     self.naming_columns = naming_columns_index
-                print(self.naming_columns)
                 return self.naming_columns
         return []
     
@@ -74,7 +73,6 @@ class AppState:
             placeholder_entry = placeholder_and_replacement_column[0].get()
             replacement_column_entry = placeholder_and_replacement_column[1].get()
             if placeholder_entry and replacement_column_entry:
-                print(placeholder_entry, column_index_from_string(replacement_column_entry)-1)
                 self.placeholders_and_replacement_columns.append((placeholder_entry, column_index_from_string(replacement_column_entry)-1))
                 return self.placeholders_and_replacement_columns
         return []
